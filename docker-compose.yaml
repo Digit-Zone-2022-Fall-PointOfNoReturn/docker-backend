@@ -1,5 +1,16 @@
 name: hackathon-digit-zone
 
 services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    networks:
+      - backend-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx
 
 networks:
+  backend-nginx:
+    driver: bridge
