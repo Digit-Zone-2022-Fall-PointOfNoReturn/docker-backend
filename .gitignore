@@ -1,0 +1,5 @@
+# Current template file, make copy of .template.env for having the correct .env file
+.env
+
+# Environment for debugging
+venv/
