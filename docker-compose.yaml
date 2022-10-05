@@ -1,15 +1,59 @@
 name: hackathon-digit-zone
 
+# Disclaimer: images application versions commonly relies on persistence
+#             of their syntax, so we must lock only major versions
+#             (I believe that nginx can have the latest stable version due
+#             to persistent syntax)
+
+# Dependencies: nginx need backend host to be resolved, so it depends on backend;
+#               backend may need database for migrations (avoiding question about)
+#               typical using
+
 services:
   nginx:
     image: nginx:stable-alpine
     container_name: nginx
     networks:
       - backend-nginx
+    depends_on:
+      - backend-django
     ports:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx
+
+  backend-django:
+    image: python:3-alpine
+    container_name: backend-django
+    build:
+      context: django
+      dockerfile: .dockerfile
+    networks:
+      - backend-nginx
+      - backend-database
+    depends_on:
+      - database-postgres
+    environment:
+      # PYTHON
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      # DJANGO
+      - DJANGO_DEBUG=1
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY?error}
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS?error}
+      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS?error}
+
+      # POSTGRES AUTH
+      # HOST:PORT
+      - DJANGO_POSTGRES_HOST=database-postgres
+      - DJANGO_POSTGRES_PORT=5432
+
+      # USER PASSWORD (ENSURE CREATED)
+      - DJANGO_POSTGRES_USER=${DJANGO_POSTGRES_USER?error}
+      - DJANGO_POSTGRES_PASSWORD=${DJANGO_POSTGRES_PASSWORD?error}
+
+      # DATABASE NAME TO CONNECT (ENSURE CREATED)
+      - DJANGO_POSTGRES_DB=${DJANGO_POSTGRES_DB?error}
 
   database-postgres:
     image: postgres:14-alpine
