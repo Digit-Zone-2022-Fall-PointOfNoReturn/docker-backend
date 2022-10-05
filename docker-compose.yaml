@@ -33,6 +33,9 @@ services:
       - backend-database
     depends_on:
       - database-postgres
+    volumes:
+      # File indicator for auto script execution
+      - .:/django/bloking.txt
     environment:
       # PYTHON
       - PYTHONDONTWRITEBYTECODE=1
