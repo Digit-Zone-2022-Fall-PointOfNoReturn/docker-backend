@@ -11,6 +11,32 @@ services:
     volumes:
       - ./nginx:/etc/nginx
 
+  database-postgres:
+    image: postgres:14-alpine
+    container_name: database-postgres
+    networks:
+      - backend-database
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      # SUPER USER
+      - POSTGRES_USER=${POSTGRES_USER?error}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?error}
+
+      # POSTGRES DJANGO USER AND DB
+      # USER PASSWORD (ENSURE CREATED)
+      - DJANGO_POSTGRES_USER=${DJANGO_POSTGRES_USER?error}
+      - DJANGO_POSTGRES_PASSWORD=${DJANGO_POSTGRES_PASSWORD?error}
+
+      # DATABASE NAME TO CONNECT (ENSURE CREATED)
+      - DJANGO_POSTGRES_DB=${DJANGO_POSTGRES_DB?error}
+
 networks:
   backend-nginx:
     driver: bridge
+
+  backend-database:
+    driver: bridge
+
+volumes:
+  postgres:
