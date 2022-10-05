@@ -18,6 +18,7 @@ services:
       - backend-database
     volumes:
       - postgres:/var/lib/postgresql/data
+      - ./postgres/scripts:/docker-entrypoint-initdb.d
     environment:
       # SUPER USER
       - POSTGRES_USER=${POSTGRES_USER?error}
