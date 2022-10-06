@@ -21,6 +21,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx:/etc/nginx
+      - django-static:/var/www/backend-django:ro
 
   backend-django:
     image: python:3-alpine
@@ -36,6 +37,7 @@ services:
     volumes:
       # File indicator for auto script execution
       - .:/django/bloking.txt
+      - django-static:/var/www/backend-django
     environment:
       # PYTHON
       - PYTHONDONTWRITEBYTECODE=1
@@ -87,4 +89,5 @@ networks:
     driver: bridge
 
 volumes:
+  django-static:
   postgres:
