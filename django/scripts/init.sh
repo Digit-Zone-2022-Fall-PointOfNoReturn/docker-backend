@@ -38,7 +38,8 @@ if ! test -f ../blocking.txt; then
     echo 'Successfull connected'
 
     # SCRIPTS TO BE EXECUTED
-    sh ./migrate.sh
+    sh migrate.sh
+    sh static.sh
 
     echo 'INIT DONE'
 
