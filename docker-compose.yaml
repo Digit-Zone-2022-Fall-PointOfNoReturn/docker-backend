@@ -13,6 +13,9 @@ services:
   nginx:
     image: nginx:stable-alpine
     container_name: nginx
+    build:
+      context: nginx
+      dockerfile: .dockerfile
     networks:
       - backend-nginx
     depends_on:
@@ -20,7 +23,6 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx:/etc/nginx
       - django-static:/var/www/backend-django:ro
 
   backend-django:
