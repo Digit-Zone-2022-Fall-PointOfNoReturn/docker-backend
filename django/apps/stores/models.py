@@ -22,4 +22,4 @@ class Product(Model):
     description = TextField(blank=True)
     # Price for one item bound by million units
     price = DecimalField(max_digits=7, decimal_places=2)
-    discount = JSONField(default=dict)
+    discount = JSONField(blank=True, default=dict)
