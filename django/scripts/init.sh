@@ -5,6 +5,11 @@
 # This can happen when, for example, Django runs before database
 set -e
 
+CURRENT="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+PARENT="$( dirname "$CURRENT" )"
+
+echo "INFO: Checking blocking file at $PARENT/blocking.txt"
+
 if ! test -f ../blocking.txt; then
     echo 'INFO: blocking.txt is not exist. Initialization...'
     echo 'INFO: Trying to connect to PostrgreSQL for init'
@@ -37,14 +42,17 @@ if ! test -f ../blocking.txt; then
 
     echo 'Successfull connected'
 
-    # SCRIPTS TO BE EXECUTED
-    sh migrate.sh
-    sh static.sh
+    # EXECUTE ALL
+    sh "$CURRENT/migrate.sh"
+    sh "$CURRENT/static.sh"
 
-    echo 'INIT DONE'
+    echo "INFO: Creating blocking file at $PARENT/blocking.txt"
+    echo 'INFO: Initialization done'
 
     # Create indicator
     printf "%s\n%s\n" \
         "This file indicator that init.sh must not execute all scripts" \
-        "Delete this file for perfom executing all scripts in this folder" > ../blocking.txt
+        "Delete this file for perfom executing all scripts in this folder" >> "$PARENT/blocking.txt"
+else
+    echo 'INFO: blocking.txt exists. Initialization skipping...'
 fi
