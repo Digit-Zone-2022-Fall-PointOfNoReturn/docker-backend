@@ -32,7 +32,8 @@ def put_user(request: Request, id: UUID) -> Response:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serialized = TelegramSerializer(instance=user)
-    deserialized = TelegramSerializer(data=request.data | serialized.data)
+    deserialized = TelegramSerializer(data=serialized.data | request.data)
+
     if not deserialized.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
