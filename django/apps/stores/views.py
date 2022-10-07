@@ -78,7 +78,7 @@ def put_store(request: Request, id: UUID) -> Response:
 
 
 @api_view(['DELETE', 'GET', 'PUT'])
-def stores(request: Request, id: UUID) -> Response:
+def store(request: Request, id: UUID) -> Response:
     if request.method == 'DELETE':
         return delete_store(id)
     if request.method == 'GET':
@@ -111,7 +111,7 @@ def post_product(request, store: UUID) -> Response:
 
 
 @api_view(['GET', 'POST'])
-def stores(request: Request, store: UUID) -> Response:
+def products(request: Request, store: UUID) -> Response:
     if request.method == 'GET':
         return get_products(store)
     if request.method == 'POST':
