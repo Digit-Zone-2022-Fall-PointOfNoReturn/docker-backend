@@ -37,8 +37,7 @@ services:
     depends_on:
       - database-postgres
     volumes:
-      # File indicator for auto script execution
-      - .:/django/bloking.txt
+      - ./django:/django
       - django-static:/var/www/backend-django
     environment:
       # PYTHON
