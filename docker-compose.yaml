@@ -37,6 +37,8 @@ services:
     volumes:
       - type: volume
         target: /django/apps/users/migrations
+      - type: volume
+        target: /django/apps/stores/migrations
       # Anonymous volume for blocking files storage
       - type: volume
         target: /django/blocking
