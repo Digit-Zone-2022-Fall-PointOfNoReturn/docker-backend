@@ -25,7 +25,7 @@ if ! test -f ../blocking.txt; then
 
     for ATTEMPT in $(seq 10)
     do
-        if ! test "$(python3 ./postgres-alive.py || echo $?)"; then
+        if ! test "$(python3 "$CURRENT/postgres-alive.py" || echo $?)"; then
             break
         fi
 
@@ -43,8 +43,7 @@ if ! test -f ../blocking.txt; then
     echo 'Successfull connected'
 
     # EXECUTE ALL
-    sh "$CURRENT/migrate.sh"
-    sh "$CURRENT/static.sh"
+    export PARENT && sh "$CURRENT/migrate.sh" "$CURRENT/static.sh"
 
     echo "INFO: Creating blocking file at $PARENT/blocking.txt"
     echo 'INFO: Initialization done'

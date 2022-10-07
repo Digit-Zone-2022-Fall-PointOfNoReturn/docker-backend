@@ -3,6 +3,6 @@ set -e
 
 echo 'INFO: Starting collect static...'
 
-python ../manage.py collectstatic --no-input
+python "${PARENT?error}/manage.py" collectstatic --no-input
 
 echo 'INFO: Done'
