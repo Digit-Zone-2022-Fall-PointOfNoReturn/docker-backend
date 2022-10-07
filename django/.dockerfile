@@ -6,4 +6,4 @@ WORKDIR /django
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT sh -c 'cd ./scripts && . init.sh' && uvicorn config.asgi:application --host 0.0.0.0 --port 8000
+ENTRYPOINT sh scripts/init.sh && uvicorn config.asgi:application --host 0.0.0.0 --port 8000
