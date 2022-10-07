@@ -32,6 +32,12 @@ ALLOWED_HOSTS = json.loads(os.environ['DJANGO_ALLOWED_HOSTS'])
 
 CSRF_TRUSTED_ORIGINS = json.loads(os.environ['DJANGO_CSRF_TRUSTED_ORIGINS'])
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        # We can use special API tokens
+        'rest_framework.permissions.AllowAny'
+    ]
+}
 
 # Application definition
 
@@ -42,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
