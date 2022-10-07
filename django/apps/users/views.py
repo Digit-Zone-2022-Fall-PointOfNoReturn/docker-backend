@@ -67,17 +67,17 @@ def get_user(request: Request) -> Response:
 
 
 def post_user(request: Request) -> Response:
-    if 'name' not in request.data:
+    if 'name' not in request.POST:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    if 'tag' in request.data:
+    if 'tag' in request.POST:
         try:
-            Telegram.objects.get(tag=request.data['tag'])
+            Telegram.objects.get(tag=request.POST['tag'])
             return Response(status=status.HTTP_409_CONFLICT)
         except ObjectDoesNotExist:
             pass
     
-    user = Telegram.objects.create(name=request.data['name'], tag=request.data.get('tag', f"-{uuid4()}"))
+    user = Telegram.objects.create(name=request.POST['name'], tag=request.POST.get('tag', f"-{uuid4()}"))
     user.save()
     
     return Response({"id": user.id}, status=status.HTTP_201_CREATED)
