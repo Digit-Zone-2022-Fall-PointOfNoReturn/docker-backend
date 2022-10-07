@@ -8,9 +8,9 @@ set -e
 CURRENT="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 PARENT="$( dirname "$CURRENT" )"
 
-echo "INFO: Checking blocking file at $PARENT/blocking.txt"
+echo "INFO: Checking blocking file at $PARENT/blocking/DELETEME.md"
 
-if ! test -f ../blocking.txt; then
+if ! test -f "$PARENT/blocking/DELETEME.md"; then
     echo 'INFO: blocking.txt is not exist. Initialization...'
     echo 'INFO: Trying to connect to PostrgreSQL for init'
 
@@ -45,13 +45,13 @@ if ! test -f ../blocking.txt; then
     # EXECUTE ALL
     export PARENT && sh "$CURRENT/migrate.sh" "$CURRENT/static.sh"
 
-    echo "INFO: Creating blocking file at $PARENT/blocking.txt"
+    echo "INFO: Creating blocking file at $PARENT/blocking/DELETEME.md"
     echo 'INFO: Initialization done'
 
     # Create indicator
     printf "%s\n%s\n" \
         "This file indicator that init.sh must not execute all scripts" \
-        "Delete this file for perfom executing all scripts in this folder" >> "$PARENT/blocking.txt"
+        "Delete this file for perfom executing all scripts in this folder" >> "$PARENT/blocking/DELETEME.md"
 else
     echo 'INFO: blocking.txt exists. Initialization skipping...'
 fi

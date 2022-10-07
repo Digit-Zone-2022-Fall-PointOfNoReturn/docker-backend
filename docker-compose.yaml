@@ -35,7 +35,9 @@ services:
     depends_on:
       - database-postgres
     volumes:
-      - ./django:/django
+      # Anonymous volume for blocking files storage
+      - type: volume
+        target: /django/blocking
       - django-static:/var/www/backend-django
     environment:
       # PYTHON
