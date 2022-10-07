@@ -20,5 +20,6 @@ class Product(Model):
     store = ForeignKey(Store, on_delete=CASCADE)
     name = CharField(blank=False, max_length=255)
     description = TextField(blank=True)
-    price = DecimalField(decimal_places=2)
+    # Price for one item bound by million units
+    price = DecimalField(max_digits=7, decimal_places=2)
     discount = JSONField(default=dict)
