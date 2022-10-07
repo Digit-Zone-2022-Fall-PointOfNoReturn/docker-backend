@@ -11,7 +11,6 @@ name: hackathon-digit-zone
 
 services:
   nginx:
-    image: nginx:stable-alpine
     container_name: nginx
     build:
       context: nginx
@@ -26,7 +25,6 @@ services:
       - django-static:/var/www/backend-django:ro
 
   backend-django:
-    image: python:3-alpine
     container_name: backend-django
     build:
       context: django
