@@ -71,7 +71,7 @@ def put_store(request: Request, id: UUID) -> Response:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serialized = StoreSerializer(existed).data
-    deserialized = StoreSerializer(data=serialized | request.data)
+    deserialized = StoreSerializer(data=serialized | store.data)
     deserialized.save()
 
     return Response(serialized, status=status.HTTP_200_OK)
