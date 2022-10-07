@@ -8,14 +8,14 @@ set -e
 CURRENT="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 PARENT="$( dirname "$CURRENT" )"
 
-echo "INFO: Checking blocking file at $PARENT/blocking/DELETEME.md"
+echo "INFO: Checking blocking file $PARENT/blocking/DELETEME.md"
 
 if ! test -f "$PARENT/blocking/DELETEME.md"; then
-    echo 'INFO: blocking.txt is not exist. Initialization...'
+    echo 'INFO: blocking file is not exist. Initialization...'
     echo 'INFO: Trying to connect to PostrgreSQL for init'
 
     # Single check variant
-    # if test "$(python3 ./postgres-alive.py || echo $?)"; then
+    # if test "$(python3 "$CURRENT/postgres-alive.py" || echo $?)"; then
     #     echo 'ERROR: Unable to connect to the PostgreSQL database'
     #     echo $'WARNING: Please, reload container and try later (or use `unless-stopped` option)'
     #     echo 'WARNING: Container will exit after 10s...'
@@ -43,7 +43,9 @@ if ! test -f "$PARENT/blocking/DELETEME.md"; then
     echo 'Successfull connected'
 
     # EXECUTE ALL
-    export PARENT && sh "$CURRENT/migrate.sh" "$CURRENT/static.sh"
+    for file in "$CURRENT"/*.inc.sh; do
+        export PARENT && sh "$file"
+    done
 
     echo "INFO: Creating blocking file at $PARENT/blocking/DELETEME.md"
     echo 'INFO: Initialization done'
