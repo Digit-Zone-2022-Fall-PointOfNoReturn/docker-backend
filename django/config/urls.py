@@ -22,5 +22,6 @@ urlpatterns = [
     path('', lambda _: redirect('admin/')),
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
-    path('api/stores/', include('stores.urls'))
+    path('api/stores/', include('stores.urls')),
+    path('api/groups/', include('groups.urls')),
 ]
