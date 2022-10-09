@@ -29,7 +29,7 @@ def post_store(request: Request) -> Response:
     if not store.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    return Response({'id': store.create().id}, status=status.HTTP_201_CREATED)
+    return Response({'id': store.create(store.validated_data).id}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST'])
@@ -103,7 +103,7 @@ def post_product(request, store_id: UUID) -> Response:
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    product = Product(store=store.id, **product.data)
+    product = Product(store=store, **product.data)
     product.save()
     
     return Response({'id': product.id}, status=status.HTTP_201_CREATED)

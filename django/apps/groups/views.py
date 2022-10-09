@@ -39,16 +39,17 @@ def post_group(request: Request) -> Response:
     if not group.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    users = request.data['users'] + [group.validated_data['admin']]
+    users = request.data['users'] + [request.data['admin']]
+    
     try:
         for user in users:
             Telegram.objects.get(id=user)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    created = group.create()
+    created = group.create(group.validated_data)
     for user in users:
-        GroupMember(group=created.id, user=user).save()
+        GroupMember(group=created, user=Telegram.objects.get(id=user)).save()
     return Response({ "id": created.id }, status=status.HTTP_200_OK)
 
 
@@ -93,11 +94,11 @@ def put_group(request: Request, id: UUID) -> Response:
     
     if 'admin' in request.data:
         try:
-            Telegram.objects.get(id=request.data['admin'])
+            admin = Telegram.objects.get(id=request.data['admin'])
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-        group.admin = request.data['admin']  # Fall on wrong 
+        group.admin = admin
     
     group.save()
     return Response(status=status.HTTP_200_OK)
@@ -139,7 +140,7 @@ def put_groupe_store(group_id: UUID, store_id: UUID) -> Response:
     if group.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    group.store = store.id
+    group.store = store
     group.save()
     return Response(status=status.HTTP_200_OK)
 
@@ -300,7 +301,7 @@ def cart_product_change(group_id: UUID, user_id: int, store_id: UUID, product_id
     if not group.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    if group.store != store_id:
+    if group.store.id != store_id:
         return Response(status=status.HTTP_400_CONFLICT)
 
     try:
