@@ -34,13 +34,6 @@ class Group(Model):
 
 
 class GroupMember(Model):
-    class Meta:
-        constraints = [
-            UniqueConstraint(
-                fields=['group', 'user'],
-                name='%(app_label)s_%(class)s_relative_uniqueness')
-        ]
-
     group = ForeignKey(Group, on_delete=CASCADE)
     user = ForeignKey(Telegram, on_delete=CASCADE)
 
