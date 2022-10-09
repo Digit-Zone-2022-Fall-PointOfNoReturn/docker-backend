@@ -26,7 +26,7 @@ def get_stores() -> Response:
 
 
 def post_store(request: Request) -> Response:
-    store = PostStoreSerializer(data=request.POST)
+    store = PostStoreSerializer(data=request.data)
     if not store.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +95,7 @@ def get_products(store: UUID) -> Response:
 
 
 def post_product(request, store: UUID) -> Response:
-    product = PostProductSerializer(data=request.POST)
+    product = PostProductSerializer(data=request.data)
     if not product.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
