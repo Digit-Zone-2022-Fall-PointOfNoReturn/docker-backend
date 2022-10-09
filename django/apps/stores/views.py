@@ -60,7 +60,7 @@ def get_store(id: UUID) -> Response:
 
 
 def put_store(request: Request, id: UUID) -> Response:
-    store = PutProductSerializer(data=request.data)
+    store = PutStoreSerializer(data=request.data)
     if not store.valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
