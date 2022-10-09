@@ -1,6 +1,6 @@
 # Django Backend Api
 ## Stores application
-### GET `/api/groups/?user=<uuid>`
+### GET `/api/groups/?user=<int>`
 #### 200
 ```json
 [uuid]
@@ -15,8 +15,8 @@ When `user` param is not set
 ```json
 {
     "name": str,
-    "admin": uuid,
-    "users": [uuid]
+    "admin": unsigned int,
+    "users": [unsigned int]
 }
 ```
 
@@ -46,7 +46,7 @@ When `admin` or one of `users` does not exist
 {
     "id": uuid,
     "name": str,
-    "admin": uuid,
+    "admin": unsigned int,
     "store": uuid,
     "collecting": bool
 }
@@ -67,7 +67,7 @@ When `admin` or one of `users` does not exist
 #### PAYLOAD II
 ```json
 {
-    "admin": uuid,
+    "admin": unsigned int
 }
 ```
 
@@ -75,7 +75,7 @@ When `admin` or one of `users` does not exist
 ```json
 {
     "name": str,
-    "admin": uuid,
+    "admin": unsigned int
 }
 ```
 
@@ -114,7 +114,7 @@ Store is collecting now
 [
     {
         "group": uuid,
-        "user": uuid,
+        "user": unsigned int,
         "store": uuid,
         "product": uuid,
         "amount": unsigned int  // 1, 2, 3 ...; 0 amount records must be removed by backend
@@ -152,14 +152,14 @@ Store is not set or collecting active
 
 -----
 
-### GET `/api/groups/<uuid>/users`
+### GET `/api/groups/<uuid>/users/`
 #### 200
 ##### JSON
 ```json
 [
     {
         "group": uuid,
-        "user": uuid,
+        "user": unsigned int,
     }
 ]
 ```
@@ -168,33 +168,33 @@ Store is not set or collecting active
 
 -----
 
-### DELETE `/api/groups/<uuid>/users/<uuid>`
+### DELETE `/api/groups/<uuid>/users/<unsigned int>`
 #### 200
 #### 404
 
 -----
 
-### POST `/api/groups/<uuid>/users/<uuid>`
+### POST `/api/groups/<uuid>/users/<unsigned int>`
 #### 200
 #### 404
 
 -----
 
-### DELETE `/api/groups/<uuid>/users/<uuid>/stores/<uuid>/cart`
+### DELETE `/api/groups/<uuid>/users/<unsigned int>/stores/<uuid>/cart`
 Flushes cart content
 
 #### 200
 
 -----
 
-### GET `/api/groups/<uuid>/users/<uuid>/stores/<uuid>/cart`
+### GET `/api/groups/<uuid>/users/<unsigned int>/stores/<uuid>/cart`
 #### 200
 ##### JSON
 ```json
 [
     {
         "group": uuid,
-        "user": uuid,
+        "user": unsigned int,
         "store": uuid,
         "product": uuid,
         "amount": unsigned int
@@ -204,11 +204,11 @@ Flushes cart content
 
 -----
 
-### DELETE `/api/groups/<uuid>/users/<uuid>/stores/<uuid>/product/<uuid>/cart`
+### DELETE `/api/groups/<uuid>/users/<unsigned int>/stores/<uuid>/product/<uuid>/cart`
 #### PAYLOAD
 ```json
 {
-    "amount": int  // OPTIONAL, DEFAULT 1
+    "amount": unsigned int  // OPTIONAL, DEFAULT 1
 }
 ```
 
@@ -222,11 +222,11 @@ When collecting is not started or store is wrong
 
 -----
 
-### PUT `/api/groups/<uuid>/users/<uuid>/stores/<uuid>/product/<uuid>/cart`
+### PUT `/api/groups/<uuid>/users/<unsigned int>/stores/<uuid>/product/<uuid>/cart`
 #### PAYLOAD
 ```json
 {
-    "amount": int  // OPTIONAL, DEFAULT 1
+    "amount": unsigned int  // OPTIONAL, DEFAULT 1
 }
 ```
 

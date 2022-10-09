@@ -24,7 +24,7 @@ urlpatterns = [
     path('<uuid:group>/stores/start', group_collecting_start),
     path('<uuid:group>/stores/stop', group_collecting_stop),
     path('<uuid:group>/users', group_users),
-    path('<uuid:group>/users/<uuid:user>', group_user),
-    path('<uuid:group>/users/<uuid:user>/stores/<uuid:store>/cart', user_cart),
-    path('<uuid:group>/users/<uuid:user>/stores/<uuid:store>/products/<uuid:product>/cart', cart_product),
+    path('<uuid:group>/users/<int:user>', group_user),
+    path('<uuid:group>/users/<int:user>/stores/<uuid:store>/cart', user_cart),
+    path('<uuid:group>/users/<int:user>/stores/<uuid:store>/products/<uuid:product>/cart', cart_product),
 ]

@@ -242,7 +242,7 @@ def group_users(request: Request, group: UUID) -> Response:
     return Response(serialized, status=status.HTTP_200_OK)
 
 
-def delete_user(group: UUID, user: UUID) -> Response:
+def delete_user(group: UUID, user: int) -> Response:
     try:
         GroupMember.objects.get(group=group, user=user).delete()
         Cart.objects.filter(group=group, user=user).delete()
@@ -251,7 +251,7 @@ def delete_user(group: UUID, user: UUID) -> Response:
     return Response(status=status.HTTP_200_OK)
     
 
-def post_user(group: UUID, user: UUID) -> Response:
+def post_user(group: UUID, user: int) -> Response:
     try:
         Group.objects.get(id=group)
         Telegram.objects.get(id=user)
@@ -263,7 +263,7 @@ def post_user(group: UUID, user: UUID) -> Response:
 
 
 @api_view(['DELETE', 'POST'])
-def group_user(request: Request, group: UUID, user: UUID) -> Response:
+def group_user(request: Request, group: UUID, user: int) -> Response:
     if request.method == 'DELETE':
         return delete_user(group, user)
     if request.method == 'POST':
@@ -271,19 +271,19 @@ def group_user(request: Request, group: UUID, user: UUID) -> Response:
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def delete_user_cart(group: UUID, user: UUID, store: UUID) -> Response:
+def delete_user_cart(group: UUID, user: int, store: UUID) -> Response:
     Cart.objects.filter(group=group, user=user, store=store).delete()
     return Response(status=status.HTTP_200_OK)
 
 
-def get_user_cart(group: UUID, user: UUID, store: UUID) -> Response:
+def get_user_cart(group: UUID, user: int, store: UUID) -> Response:
     carts = Cart.objects.filter(group=group, user=user, store=store)
     serialized = CartSerializer(carts, many=True).data
     return Response(serialized, status=status.HTTP_200_OK)
 
 
 @api_view(['DELETE', 'GET'])
-def user_cart(request: Request, group: UUID, user: UUID, store: UUID) -> Response:
+def user_cart(request: Request, group: UUID, user: int, store: UUID) -> Response:
     if request.method == 'DELETE':
         return delete_user_cart(group, user, store)
     if request.method == 'GET':
@@ -291,7 +291,7 @@ def user_cart(request: Request, group: UUID, user: UUID, store: UUID) -> Respons
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def cart_product_change(group: UUID, user: UUID, store: UUID, product: UUID, delta: int) -> Response:
+def cart_product_change(group: UUID, user: int, store: UUID, product: UUID, delta: int) -> Response:
     try:
         group = Group.objects.get(id=group)
     except ObjectDoesNotExist:
@@ -324,7 +324,7 @@ def cart_product_change(group: UUID, user: UUID, store: UUID, product: UUID, del
 
 
 @api_view(['DELETE', 'PUT'])
-def cart_product(request: Request, group: UUID, user: UUID, store: UUID, product: UUID) -> Response:
+def cart_product(request: Request, group: UUID, user: int, store: UUID, product: UUID) -> Response:
     amount = request.data.get('amount', 1)
 
     if request.method == 'DELETE':
