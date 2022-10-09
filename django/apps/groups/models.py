@@ -7,6 +7,7 @@ from django.db.models import (
     CharField,
     ForeignKey,
     PositiveIntegerField,
+    SET_NULL,
     UniqueConstraint,
     UUIDField
 )
@@ -18,7 +19,7 @@ from stores.models import Product, Store
 class Group(Model):
     id = UUIDField(editable=False, default=uuid.uuid4, primary_key=True)
     admin = ForeignKey(Telegram, on_delete=CASCADE)
-    store = ForeignKey(Store, default=None, null=True, on_delete=CASCADE)
+    store = ForeignKey(Store, default=None, null=True, on_delete=SET_NULL)
     name = CharField(blank=False, max_length=255)
     collecting = BooleanField(default=False)
 
