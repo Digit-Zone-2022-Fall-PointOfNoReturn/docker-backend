@@ -25,5 +25,4 @@ class Product(Model):
     discount = JSONField(blank=True, default=dict)
 
     def __str__(self) -> str:
-        store = Store.objects.get(id=self.store)
-        return f'{store.name} {self.name}'
+        return f'{self.store.name} {self.name}'
