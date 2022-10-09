@@ -39,17 +39,17 @@ def post_group(request: Request) -> Response:
     if not group.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    users = request.data['users'] + [group.admin]
+    users = request.data['users'] + [group.validated_data['admin']]
     try:
         for user in users:
             Telegram.objects.get(id=user)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    group.create()
+    created = group.create()
     for user in users:
-        GroupMember(group=group.id, user=user).save()
-    return Response({ "id": group.id }, status=status.HTTP_200_OK)
+        GroupMember(group=created.id, user=user).save()
+    return Response({ "id": created.id }, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST'])
@@ -114,10 +114,10 @@ def group(request: Request, id: UUID) -> Response:
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def delete_groupe_store(group: UUID, store: UUID) -> Response:
+def delete_groupe_store(group_id: UUID, store_id: UUID) -> Response:
     try:
-        group = Group.objects.get(id=group)
-        store = Store.objects.get(id=store)
+        group = Group.objects.get(id=group_id)
+        Store.objects.get(id=store_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -129,10 +129,10 @@ def delete_groupe_store(group: UUID, store: UUID) -> Response:
     return Response(status=status.HTTP_200_OK)
 
 
-def put_groupe_store(group: UUID, store: UUID) -> Response:
+def put_groupe_store(group_id: UUID, store_id: UUID) -> Response:
     try:
-        group = Group.objects.get(id=group)
-        store = Store.objects.get(id=store)
+        group = Group.objects.get(id=group_id)
+        store = Store.objects.get(id=store_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -154,13 +154,13 @@ def group_store(request: Request, group: UUID, store: UUID) -> Response:
 
 
 @api_view(['GET'])
-def group_store_carts(request: Request, group: UUID, store: UUID) -> Response:
+def group_store_carts(request: Request, group_id: UUID, store_id: UUID) -> Response:
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     try:
-        group = Group.objects.get(id=group)
-        store = Store.objects.get(id=store)
+        group = Group.objects.get(id=group_id)
+        store = Store.objects.get(id=store_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -170,12 +170,12 @@ def group_store_carts(request: Request, group: UUID, store: UUID) -> Response:
 
 
 @api_view(['POST'])
-def group_collecting_drop(request: Request, group: UUID) -> Response:
+def group_collecting_drop(request: Request, group_id: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     try:
-        group = Group.objects.get(id=group)
+        group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -190,12 +190,12 @@ def group_collecting_drop(request: Request, group: UUID) -> Response:
 
 
 @api_view(['POST'])
-def group_collecting_start(request: Request, group: UUID) -> Response:
+def group_collecting_start(request: Request, group_id: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group)
+        group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -209,12 +209,12 @@ def group_collecting_start(request: Request, group: UUID) -> Response:
 
 
 @api_view(['POST'])
-def group_collecting_stop(request: Request, group: UUID) -> Response:
+def group_collecting_stop(request: Request, group_id: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group)
+        group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -228,12 +228,12 @@ def group_collecting_stop(request: Request, group: UUID) -> Response:
 
 
 @api_view(['GET'])
-def group_users(request: Request, group: UUID) -> Response:
+def group_users(request: Request, group_id: UUID) -> Response:
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group)
+        group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -291,25 +291,25 @@ def user_cart(request: Request, group: UUID, user: int, store: UUID) -> Response
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def cart_product_change(group: UUID, user: int, store: UUID, product: UUID, delta: int) -> Response:
+def cart_product_change(group_id: UUID, user_id: int, store_id: UUID, product_id: UUID, delta: int) -> Response:
     try:
-        group = Group.objects.get(id=group)
+        group = Group.objects.get(id=group_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if not group.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    if group.store != store:
+    if group.store != store_id:
         return Response(status=status.HTTP_400_CONFLICT)
 
     try:
-        product = Cart.objects.get(group=group, user=user, store=store, product=product)
+        product = Cart.objects.get(group=group, user=user_id, store=store_id, product=product)
     except ObjectDoesNotExist:
         if delta <= 0:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        product = Cart(group=group, user=user, store=store, product=product, amount=delta)
+        product = Cart(group=group, user=user_id, store=store_id, product=product, amount=delta)
         product.save()
         
         return Response(status=status.HTTP_200_OK)

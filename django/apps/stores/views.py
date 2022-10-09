@@ -93,13 +93,13 @@ def get_products(store: UUID) -> Response:
     return Response(serialized, status=status.HTTP_200_OK)
 
 
-def post_product(request, store: UUID) -> Response:
+def post_product(request, store_id: UUID) -> Response:
     product = PostProductSerializer(data=request.data)
     if not product.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        store = Store.objects.get(id=store)
+        store = Store.objects.get(id=store_id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
