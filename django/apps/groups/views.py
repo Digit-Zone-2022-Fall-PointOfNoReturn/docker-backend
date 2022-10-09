@@ -32,14 +32,14 @@ def get_groups(request: Request) -> Response:
 
 
 def post_group(request: Request) -> Response:
-    if 'users' not in request.POST:
+    if 'users' not in request.data:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    group = PostGroupsSerializer(data=request.POST)
+    group = PostGroupsSerializer(data=request.data)
     if not group.is_valid():
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    users = request.POST['users'] + [group.admin]
+    users = request.data['users'] + [group.admin]
     try:
         for user in users:
             Telegram.objects.get(id=user)
