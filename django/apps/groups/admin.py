@@ -14,14 +14,19 @@ class CartView(admin.ModelAdmin):
 
 @admin.register(Group)
 class GroupView(admin.ModelAdmin):
-    list_display = ['id']
+    list_display = ['id', 'name']
+
+    def get_form(self, request: HttpRequest, obj: Group = None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['store'].required = False
+        return form
 
     def get_readonly_fields(self, request: HttpRequest, obj: Group = None):
         return [] if obj is None else ['id']
 
 
 @admin.register(GroupMember)
-class GroupView(admin.ModelAdmin):
+class GroupMemberView(admin.ModelAdmin):
     list_display = ['group', 'user']
 
     def get_readonly_fields(self, request: HttpRequest, obj: Group = None):
