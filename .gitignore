@@ -1,5 +1,5 @@
-# Current template file, make copy of .template.env for having the correct .env file
-.env
+# This file doesn't contains any sensetive information, so it can be published for easy to install example
+# .env
 
 # Environment for debugging
 venv/
