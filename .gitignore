@@ -3,3 +3,6 @@
 
 # Environment for debugging
 venv/
+
+# IDEA
+.idea/
