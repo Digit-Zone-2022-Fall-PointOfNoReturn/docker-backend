@@ -72,7 +72,7 @@ def delete_group(id: UUID) -> Response:
 
 def get_group(id: UUID) -> Response:
     try:
-        group = Group.objects.get(id=id).delete()
+        group = Group.objects.get(id=id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
@@ -85,7 +85,7 @@ def put_group(request: Request, id: UUID) -> Response:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        group = Group.objects.get(id=id).delete()
+        group = Group.objects.get(id=id)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
