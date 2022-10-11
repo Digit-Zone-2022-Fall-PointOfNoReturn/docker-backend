@@ -115,33 +115,33 @@ def group(request: Request, id: UUID) -> Response:
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def delete_groupe_store(group_id: UUID, store_id: UUID) -> Response:
+def delete_groupe_store(group: UUID, store: UUID) -> Response:
     try:
-        group = Group.objects.get(id=group_id)
-        Store.objects.get(id=store_id)
+        group_obj = Group.objects.get(id=group)
+        Store.objects.get(id=store)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if group.collecting:
+    if group_obj.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    group.store = None
-    group.save()
+    group_obj.store = None
+    group_obj.save()
     return Response(status=status.HTTP_200_OK)
 
 
-def put_groupe_store(group_id: UUID, store_id: UUID) -> Response:
+def put_groupe_store(group: UUID, store: UUID) -> Response:
     try:
-        group = Group.objects.get(id=group_id)
-        store = Store.objects.get(id=store_id)
+        group_obj = Group.objects.get(id=group)
+        store_obj = Store.objects.get(id=store)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if group.collecting:
+    if group_obj.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    group.store = store
-    group.save()
+    group_obj.store = store
+    group_obj.save()
     return Response(status=status.HTTP_200_OK)
 
 
@@ -155,90 +155,90 @@ def group_store(request: Request, group: UUID, store: UUID) -> Response:
 
 
 @api_view(['GET'])
-def group_store_carts(request: Request, group_id: UUID, store_id: UUID) -> Response:
+def group_store_carts(request: Request, group: UUID, store: UUID) -> Response:
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     try:
-        group = Group.objects.get(id=group_id)
-        store = Store.objects.get(id=store_id)
+        group_obj = Group.objects.get(id=group)
+        store_obj = Store.objects.get(id=store)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    carts = Cart.objects.filter(group=group.id, store=store.id)
+    carts = Cart.objects.filter(group=group_obj, store=store_obj)
     serialized = CartSerializer(carts, many=True).data
     return Response(serialized, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-def group_collecting_drop(request: Request, group_id: UUID) -> Response:
+def group_collecting_drop(request: Request, group: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     try:
-        group = Group.objects.get(id=group_id)
+        group_obj = Group.objects.get(id=group)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    if group.store is None:
+    if group_obj.store is None:
         return Response(status=status.HTTP_409_CONFLICT)
 
-    if group.collecting:
+    if group_obj.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
 
-    Cart.objects.filter(group=group.id, store=group.store).delete()
+    Cart.objects.filter(group=group_obj, store=group_obj.store).delete()
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-def group_collecting_start(request: Request, group_id: UUID) -> Response:
+def group_collecting_start(request: Request, group: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group_id)
+        group_obj = Group.objects.get(id=group)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    if group.store is None:
+    if group_obj.store is None:
         return Response(status=status.HTTP_409_CONFLICT)
 
-    group.collecting = True
-    group.save()
+    group_obj.collecting = True
+    group_obj.save()
     
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
-def group_collecting_stop(request: Request, group_id: UUID) -> Response:
+def group_collecting_stop(request: Request, group: UUID) -> Response:
     if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group_id)
+        group_obj = Group.objects.get(id=group)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    if group.store is None:
+    if group_obj.store is None:
         return Response(status=status.HTTP_409_CONFLICT)
 
-    group.collecting = False
-    group.save()
+    group_obj.collecting = False
+    group_obj.save()
     
     return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def group_users(request: Request, group_id: UUID) -> Response:
+def group_users(request: Request, group: UUID) -> Response:
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     try:
-        group = Group.objects.get(id=group_id)
+        group_obj = Group.objects.get(id=group)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    users = GroupMember.objects.filter(group=group.id)
+    users = GroupMember.objects.filter(group=group_obj)
     serialized = GroupMemberSerializer(users, many=True).data
     return Response(serialized, status=status.HTTP_200_OK)
 
@@ -292,35 +292,36 @@ def user_cart(request: Request, group: UUID, user: int, store: UUID) -> Response
     return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-def cart_product_change(group_id: UUID, user_id: int, store_id: UUID, product_id: UUID, delta: int) -> Response:
+def cart_product_change(group: UUID, user: int, store: UUID, product: UUID, delta: int) -> Response:
     try:
-        group = Group.objects.get(id=group_id)
+        group_obj = Group.objects.get(id=group)
     except ObjectDoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     
-    if not group.collecting:
+    if not group_obj.collecting:
         return Response(status=status.HTTP_409_CONFLICT)
     
-    if group.store.id != store_id:
+    if group_obj.store.id != store:
         return Response(status=status.HTTP_400_CONFLICT)
 
     try:
-        product = Cart.objects.get(group=group, user=user_id, store=store_id, product=product)
+        product_obj = Cart.objects.get(group=group, user=user, store=store, product=product)
     except ObjectDoesNotExist:
         if delta <= 0:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        product = Cart(group=group, user=user_id, store=store_id, product=product, amount=delta)
-        product.save()
+        product_obj = Cart(group=group, user=user, store=store, product=product, amount=delta)
+        product_obj.save()
         
         return Response(status=status.HTTP_200_OK)
     
-    amount = product.amount + delta
+    amount = product_obj.amount + delta
     if amount <= 0:
         product.delete()
         return Response(status=status.HTTP_200_OK)
 
-    product.amount = amount
+    product_obj.amount = amount
+    product_obj.save()
     return Response(status=status.HTTP_200_OK)
 
 
